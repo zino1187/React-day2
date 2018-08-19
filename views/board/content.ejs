@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;}
+
+input[type=text], select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    resize: vertical;
+}
+
+input[type=submit] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+.container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+</style>
+<script src="https://cdn.ckeditor.com/4.10.0/standard/ckeditor.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+$(function(){
+	CKEDITOR.replace("content");//기존 textarea를 편집기 디자인
+	//으로 변신시킴!!
+
+	$("#bt").click(function(){
+		regist();
+	});
+
+	$("#bt_reply").click(function(){
+		reply();
+	});
+
+	$("#bt_del").click(function(){
+		del();
+	});
+
+	$("#bt_edit").click(function(){
+		edit();
+	});
+
+});
+
+function regist(){
+	$("form").attr("action","/board/regist");
+	$("form").attr("method","post");
+	$("form").submit();
+}
+
+function reply(){
+	//ajax 로 전송...
+	//ajax의 기존 코드를 제이쿼리가 상당히 단축시켜 놓았으므로,
+	//이번 예제에서는 JQuery Ajax 를 써보자!!!
+	$.post("/comments/regist", {
+			msg:$("#msg").val(),
+			cwriter:$("#cwriter").val(),
+			board_id:<%=row.board_id%>
+		}, function(data, status){
+			//alert("노드서버에서 응답온 데이터"+data+",status "+status);
+			//기존 테이블에 누적!!!
+			$("#area").append("<div>메시지:"+data.msg+" , 작성자:"+data.cwriter+" </div>");
+	});
+}
+
+function del(){
+	if(confirm("이 글을 삭제하시면 관련글들이 모두 삭제됩니다\n삭제하시겠습니까?")){
+		//location.href="";
+		$(location).attr("href","/board/delete?board_id=<%=row.board_id%>");
+	}
+}
+
+function edit(){
+	$("form").attr("action","/board/edit");
+	$("form").attr("method","post");
+	$("form").submit();
+}
+</script>
+</head>
+<body>
+
+<h3>상세보기</h3>
+
+<div class="container">
+  <form>
+    <label for="fname">제목</label>
+    <input type="text" id="title" name="title" value="<%=row.title%>">
+
+    <label for="lname">작성자</label>
+    <input type="text" id="writer" name="writer" value="<%=row.writer%>">
+
+
+    <label for="subject">Subject</label>
+    <textarea id="content" name="content" placeholder="Write something.." style="height:120px"><%=row.content%></textarea>
+
+    <input type="button" id="bt" value="Submit">
+	<input type="button" id="bt_del" value="삭제">
+	<input type="button" id="bt_edit" value="수정">
+	
+	<div class="reply-style">
+		<input type="text" name="msg" id="msg" placeholder="코멘트 입력">
+		<input type="text" name="cwriter" id="cwriter" placeholder="작성자">
+		<input type="button" id="bt_reply" value="코멘트 등록">
+	<div>
+  </form>
+</div>
+
+<table id="customers">
+  <tr>
+    <th width="85%">제목</th>
+    <th width="15%">작성자</th>
+  </tr>
+</table>
+<div id="area">
+	<%for(var i=0; i<rows.length;i++){%>
+		<% var obj=rows[i];%>
+		<div>메시지:<%=obj.msg%> ,  작성자:<%=obj.cwriter%></div>	
+	<%}%>
+</div>
+
+</body>
+</html>

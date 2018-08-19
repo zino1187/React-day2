@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#customers {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#customers td, #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+</style>
+</head>
+<body>
+
+<table id="customers">
+	<tr>
+		<th width="70%">제목</th>
+		<th width="15%">작성자</th>
+		<th width="15%">등록일</th>
+	</tr>
+	<%for(var i=0;i<rows.length;i++){%>
+	<%var obj=rows[i];%>
+	<tr>
+		<td><a href="/board/content?board_id=<%=obj.board_id%>"><%=obj.title%>[<%=obj.cnt%>]</a></td>
+		<td><%=obj.writer%></td>
+		<td><%=obj.regdate%></td>
+	</tr>
+	<%}%>
+	<tr>	
+		<td colspan="3">
+		<button>글등록</button>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>
